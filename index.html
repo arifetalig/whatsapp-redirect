@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirect ke WhatsApp</title>
+  <script>
+    // Ambil parameter dari URL
+    const params = new URLSearchParams(window.location.search);
+    const nama = params.get("nama") || "";
+    const lokasi = params.get("lokasi") || "";
+    const notel = params.get("notel") || "";
+    const peserta = params.get("peserta") || "";
+
+    // Gantikan nombor WhatsApp kau di sini
+    const phone = "601114160068";
+
+    // Susun mesej automatik
+    const text = `1. Nama: ${nama}%0A2. Lokasi: ${lokasi}%0A3. No Tel: ${notel}%0A4. Jumlah Peserta: ${peserta}`;
+
+    // Redirect ke WhatsApp
+    const url = `https://wa.me/${phone}?text=${text}`;
+    window.location.href = url;
+  </script>
+</head>
+<body>
+  <p>Sekejap ya... sedang buka WhatsApp...</p>
+</body>
+</html>
