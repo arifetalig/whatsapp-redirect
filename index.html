@@ -21,6 +21,22 @@
       color:#222;
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    .hero{
+      width:100%;
+      text-align:center;
+      background:#fff;
+      padding:20px 0;
+    }
+    .hero img{
+      width:100%;
+      max-width:900px;
+      height:auto;
+      display:block;
+      margin:auto;
+      border-radius:12px;
+      box-shadow:0 8px 30px rgba(16,24,40,0.08);
     }
     .wrap{
       min-height:100vh;
@@ -39,17 +55,13 @@
       display:grid;
       grid-template-columns: 1fr 420px;
     }
-    /* left content */
-    .left{
-      padding:34px;
-    }
+    .left{padding:34px;}
     h1{margin:0 0 12px;font-size:22px}
     p.lead{margin:0 0 18px;color:var(--muted);line-height:1.45}
     ul.bullets{padding-left:18px;margin:14px 0 22px;color:var(--muted)}
     .sample{
       background:#f7fbff;border:1px solid #eef6ff;padding:12px;border-radius:8px;color:#0b3a66;font-size:13px;margin-bottom:18px;
     }
-    /* right form */
     .right{
       background:linear-gradient(180deg,#fbfdff,#ffffff);
       padding:22px;
@@ -93,16 +105,23 @@
   </style>
 </head>
 <body>
+
+  <!-- Bahagian gambar promosi -->
+  <section class="hero">
+    <img src="poster.gif" alt="Poster CPR & Heimlich">
+  </section>
+
+  <!-- Bahagian borang -->
   <div class="wrap">
     <div class="card" role="region" aria-label="Pendaftaran Kelas CPR">
       <div class="left" aria-hidden="false">
         <h1>Pendaftaran Kelas CPR & Heimlich Maneuver</h1>
-        <p class="lead">Isi maklumat ringkas di sebelah kanan. Selepas tekan “Hantar ke WhatsApp”, WhatsApp anda akan terbuka dengan mesej pra-isian — semak dan hantar untuk lengkapkan pendaftaran.</p>
+        <p class="lead">Isi maklumat ringkas untuk kami kongsikan maklumat seperti yuran dan slot kosong. Selepas tekan “Hantar ke WhatsApp”, WhatsApp anda akan terbuka dengan mesej pra-isian — semak dan hantar untuk lengkapkan pendaftaran.</p>
 
         <div class="sample">
           Contoh mesej yang akan muncul dalam WhatsApp (anda boleh edit sebelum tekan Hantar):
-          <pre style="white-space:pre-wrap;margin:8px 0 0;font-size:13px">1. Nama: Ali
-2. Lokasi: Selangor
+          <pre style="white-space:pre-wrap;margin:8px 0 0;font-size:13px">1. Nama: Nur
+2. Lokasi: Kuala Terengganu
 3. No Tel: 012313132
 4. Jumlah Peserta: 2</pre>
         </div>
@@ -113,7 +132,7 @@
           <li>Slot terhad setiap kelas — cepat daftar</li>
         </ul>
 
-        <p style="margin:0 0 8px"><strong>Nota:</strong> Jika WhatsApp tidak terbuka automatik, sistem akan paparkan pautan yang boleh anda tekan secara manual.</p>
+        <p><strong>Nota:</strong> Jika WhatsApp tidak terbuka automatik, sistem akan paparkan pautan yang boleh anda tekan secara manual.</p>
       </div>
 
       <div class="right">
@@ -140,30 +159,26 @@
     </div>
   </div>
 
-  <footer class="note">Hosted: GitHub Pages — pastikan anda gunakan URL Pages anda untuk akses awam</footer>
+  <footer class="note">Hosted di GitHub Pages</footer>
 
   <script>
     (function(){
-      const phoneNumber = "601114160068"; // tukar nombor di sini jika perlu (format country code tanpa +)
+      const phoneNumber = "601114160068";
       const form = document.getElementById("cprForm");
       const submitBtn = document.getElementById("submitBtn");
       const fallbackDiv = document.getElementById("fallback");
       const fallbackLink = document.getElementById("fallbackLink");
 
-      function safeTrim(s){
-        return (s||"").toString().trim();
-      }
+      function safeTrim(s){return (s||"").toString().trim();}
 
       function buildWhatsAppUrl(data){
-        // newline encoded as %0A
         const text = [
           `1. Nama: ${data.name}`,
           `2. Lokasi: ${data.location}`,
           `3. No Tel: ${data.phone}`,
           `4. Jumlah Peserta: ${data.count}`
         ].join('\n');
-        const encoded = encodeURIComponent(text);
-        return `https://wa.me/${phoneNumber}?text=${encoded}`;
+        return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
       }
 
       form.addEventListener('submit', function(ev){
@@ -178,7 +193,6 @@
           count: safeTrim(document.getElementById('count').value)
         };
 
-        // Basic validation
         if(!payload.name || !payload.location || !payload.phone || !payload.count){
           alert('Sila lengkapkan semua maklumat.');
           submitBtn.disabled = false;
@@ -187,41 +201,24 @@
         }
 
         const waUrl = buildWhatsAppUrl(payload);
-
-        // Primary attempt: try open in new tab (should work on GitHub Pages)
-        // Use window.location.href as fallback if window.open blocked
         try {
           const newWindow = window.open(waUrl, '_blank');
           if(!newWindow){
-            // Popup blocked — show manual link
             fallbackDiv.style.display = 'block';
             fallbackLink.href = waUrl;
-            fallbackLink.textContent = 'Buka WhatsApp (klik di sini)';
           } else {
-            // success: close the form focus and show fallback hidden
             fallbackDiv.style.display = 'none';
           }
         } catch (err) {
-          // unexpected error -> show fallback link
           fallbackDiv.style.display = 'block';
           fallbackLink.href = waUrl;
-          fallbackLink.textContent = 'Buka WhatsApp (klik di sini)';
         } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = 'Hantar ke WhatsApp';
         }
       });
-
-      // Optional: allow prefill via query params if you want to test by URL quickly
-      (function prefillFromQuery(){
-        const params = new URLSearchParams(window.location.search);
-        if(params.has('name')) document.getElementById('name').value = params.get('name') || '';
-        if(params.has('location')) document.getElementById('location').value = params.get('location') || '';
-        if(params.has('phone')) document.getElementById('phone').value = params.get('phone') || '';
-        if(params.has('count')) document.getElementById('count').value = params.get('count') || '1';
-      })();
     })();
   </script>
+
 </body>
 </html>
-
