@@ -1,29 +1,227 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redirect ke WhatsApp</title>
-  <script>
-    // Ambil parameter dari URL
-    const params = new URLSearchParams(window.location.search);
-    const nama = params.get("nama") || "";
-    const lokasi = params.get("lokasi") || "";
-    const notel = params.get("notel") || "";
-    const peserta = params.get("peserta") || "";
-
-    // Gantikan nombor WhatsApp kau di sini
-    const phone = "601114160068";
-
-    // Susun mesej automatik
-    const text = `1. Nama: ${nama}%0A2. Lokasi: ${lokasi}%0A3. No Tel: ${notel}%0A4. Jumlah Peserta: ${peserta}`;
-
-    // Redirect ke WhatsApp
-    const url = `https://wa.me/${phone}?text=${text}`;
-    window.location.href = url;
-  </script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pendaftaran Kelas CPR & Heimlich</title>
+  <meta name="description" content="Isi borang ringkas untuk daftar kelas CPR. Selepas hantar, WhatsApp akan terbuka dengan maklumat anda.">
+  <style>
+    :root{
+      --card-bg:#ffffff;
+      --page-bg:#f4f7fb;
+      --accent:#0b84ff;
+      --success:#25d366;
+      --muted:#666;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      background:var(--page-bg);
+      color:#222;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    .wrap{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+    }
+    .card{
+      max-width:760px;
+      width:100%;
+      background:var(--card-bg);
+      border-radius:14px;
+      box-shadow:0 8px 30px rgba(16,24,40,0.08);
+      overflow:hidden;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+    }
+    /* left content */
+    .left{
+      padding:34px;
+    }
+    h1{margin:0 0 12px;font-size:22px}
+    p.lead{margin:0 0 18px;color:var(--muted);line-height:1.45}
+    ul.bullets{padding-left:18px;margin:14px 0 22px;color:var(--muted)}
+    .sample{
+      background:#f7fbff;border:1px solid #eef6ff;padding:12px;border-radius:8px;color:#0b3a66;font-size:13px;margin-bottom:18px;
+    }
+    /* right form */
+    .right{
+      background:linear-gradient(180deg,#fbfdff,#ffffff);
+      padding:22px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    form{
+      width:100%;
+      max-width:360px;
+    }
+    label{display:block;font-weight:600;font-size:13px;margin-bottom:6px}
+    input[type="text"], input[type="tel"], input[type="number"]{
+      width:100%;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid #dde6f0;
+      margin-bottom:14px;
+      font-size:14px;
+    }
+    .btn{
+      display:inline-block;
+      width:100%;
+      padding:12px 14px;
+      border-radius:10px;
+      background:var(--success);
+      color:#fff;
+      border:0;
+      font-weight:700;
+      cursor:pointer;
+      font-size:15px;
+    }
+    .btn:active{transform:translateY(1px)}
+    .disclaimer{font-size:13px;color:var(--muted);margin-top:12px}
+    footer.note{padding:14px 18px;text-align:center;font-size:13px;color:#777;background:#fbfdff}
+    @media (max-width:880px){
+      .card{grid-template-columns:1fr; padding:8px}
+      .right{order:2;padding:18px}
+      .left{order:1;padding:18px}
+    }
+  </style>
 </head>
 <body>
-  <p>Sekejap ya... sedang buka WhatsApp...</p>
+  <div class="wrap">
+    <div class="card" role="region" aria-label="Pendaftaran Kelas CPR">
+      <div class="left" aria-hidden="false">
+        <h1>Pendaftaran Kelas CPR & Heimlich Maneuver</h1>
+        <p class="lead">Isi maklumat ringkas di sebelah kanan. Selepas tekan “Hantar ke WhatsApp”, WhatsApp anda akan terbuka dengan mesej pra-isian — semak dan hantar untuk lengkapkan pendaftaran.</p>
+
+        <div class="sample">
+          Contoh mesej yang akan muncul dalam WhatsApp (anda boleh edit sebelum tekan Hantar):
+          <pre style="white-space:pre-wrap;margin:8px 0 0;font-size:13px">1. Nama: Ali
+2. Lokasi: Selangor
+3. No Tel: 012313132
+4. Jumlah Peserta: 2</pre>
+        </div>
+
+        <ul class="bullets">
+          <li>Latihan praktikal — sijil disediakan</li>
+          <li>Tiada pengalaman perubatan diperlukan</li>
+          <li>Slot terhad setiap kelas — cepat daftar</li>
+        </ul>
+
+        <p style="margin:0 0 8px"><strong>Nota:</strong> Jika WhatsApp tidak terbuka automatik, sistem akan paparkan pautan yang boleh anda tekan secara manual.</p>
+      </div>
+
+      <div class="right">
+        <form id="cprForm" autocomplete="off" novalidate>
+          <label for="name">Nama</label>
+          <input id="name" name="name" type="text" placeholder="Contoh: Ali" required>
+
+          <label for="location">Lokasi</label>
+          <input id="location" name="location" type="text" placeholder="Contoh: Selangor" required>
+
+          <label for="phone">Nombor Telefon</label>
+          <input id="phone" name="phone" type="tel" placeholder="Contoh: 0123456789" required>
+
+          <label for="count">Jumlah Peserta</label>
+          <input id="count" name="count" type="number" min="1" value="1" required>
+
+          <button type="submit" class="btn" id="submitBtn">Hantar ke WhatsApp</button>
+
+          <div class="disclaimer" id="fallback" style="display:none;margin-top:10px">
+            Jika WhatsApp tidak terbuka, <a id="fallbackLink" href="#" target="_blank" rel="noopener">klik sini untuk buka manual</a>.
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer class="note">Hosted: GitHub Pages — pastikan anda gunakan URL Pages anda untuk akses awam</footer>
+
+  <script>
+    (function(){
+      const phoneNumber = "601114160068"; // tukar nombor di sini jika perlu (format country code tanpa +)
+      const form = document.getElementById("cprForm");
+      const submitBtn = document.getElementById("submitBtn");
+      const fallbackDiv = document.getElementById("fallback");
+      const fallbackLink = document.getElementById("fallbackLink");
+
+      function safeTrim(s){
+        return (s||"").toString().trim();
+      }
+
+      function buildWhatsAppUrl(data){
+        // newline encoded as %0A
+        const text = [
+          `1. Nama: ${data.name}`,
+          `2. Lokasi: ${data.location}`,
+          `3. No Tel: ${data.phone}`,
+          `4. Jumlah Peserta: ${data.count}`
+        ].join('\n');
+        const encoded = encodeURIComponent(text);
+        return `https://wa.me/${phoneNumber}?text=${encoded}`;
+      }
+
+      form.addEventListener('submit', function(ev){
+        ev.preventDefault();
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sila tunggu...';
+
+        const payload = {
+          name: safeTrim(document.getElementById('name').value),
+          location: safeTrim(document.getElementById('location').value),
+          phone: safeTrim(document.getElementById('phone').value),
+          count: safeTrim(document.getElementById('count').value)
+        };
+
+        // Basic validation
+        if(!payload.name || !payload.location || !payload.phone || !payload.count){
+          alert('Sila lengkapkan semua maklumat.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Hantar ke WhatsApp';
+          return;
+        }
+
+        const waUrl = buildWhatsAppUrl(payload);
+
+        // Primary attempt: try open in new tab (should work on GitHub Pages)
+        // Use window.location.href as fallback if window.open blocked
+        try {
+          const newWindow = window.open(waUrl, '_blank');
+          if(!newWindow){
+            // Popup blocked — show manual link
+            fallbackDiv.style.display = 'block';
+            fallbackLink.href = waUrl;
+            fallbackLink.textContent = 'Buka WhatsApp (klik di sini)';
+          } else {
+            // success: close the form focus and show fallback hidden
+            fallbackDiv.style.display = 'none';
+          }
+        } catch (err) {
+          // unexpected error -> show fallback link
+          fallbackDiv.style.display = 'block';
+          fallbackLink.href = waUrl;
+          fallbackLink.textContent = 'Buka WhatsApp (klik di sini)';
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Hantar ke WhatsApp';
+        }
+      });
+
+      // Optional: allow prefill via query params if you want to test by URL quickly
+      (function prefillFromQuery(){
+        const params = new URLSearchParams(window.location.search);
+        if(params.has('name')) document.getElementById('name').value = params.get('name') || '';
+        if(params.has('location')) document.getElementById('location').value = params.get('location') || '';
+        if(params.has('phone')) document.getElementById('phone').value = params.get('phone') || '';
+        if(params.has('count')) document.getElementById('count').value = params.get('count') || '1';
+      })();
+    })();
+  </script>
 </body>
 </html>
+
