@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ms">
 <head>
   <meta charset="utf-8" />
@@ -75,7 +74,7 @@
       max-width:900px;
     }
     label{display:block;font-weight:600;font-size:13px;margin-bottom:6px}
-    input[type="text"], input[type="tel"], input[type="number"]{
+    input[type="text"], input[type="tel"], input[type="number"], select{
       width:100%;
       padding:10px 12px;
       border-radius:8px;
@@ -97,6 +96,8 @@
     }
     .btn:active{transform:translateY(1px)}
     .disclaimer{font-size:13px;color:var(--muted);margin-top:12px}
+    .level-msg{font-size:13px;color:#333;margin-bottom:12px;background:#f0f8ff;padding:10px;border-radius:6px}
+    .hidden{display:none}
     footer.note{padding:14px 18px;text-align:center;font-size:13px;color:#777;background:#fbfdff}
     @media (max-width:880px){
       .card{grid-template-columns:1fr; padding:8px}
@@ -120,11 +121,13 @@
         <p class="lead">Isi maklumat ringkas untuk kami kongsikan maklumat seperti yuran dan slot kosong. Selepas tekan “Hantar ke WhatsApp”, WhatsApp anda akan terbuka dengan mesej pra-isian — semak dan hantar untuk lengkapkan pendaftaran.</p>
 
         <div class="sample">
-          Contoh mesej yang akan muncul dalam WhatsApp (anda boleh edit sebelum tekan Hantar):
-          <pre style="white-space:pre-wrap;margin:8px 0 0;font-size:13px">1. Nama: Nur
-2. Lokasi: Kuala Terengganu
-3. No Tel: 012313132
-4. Jumlah Peserta: 2</pre>
+          Contoh mesej yang akan muncul dalam WhatsApp:
+          <pre style="white-space:pre-wrap;margin:8px 0 0;font-size:13px">Nama: Nur
+Jenis Kelas: Kelas beserta exam
+Lokasi: Kuala Terengganu
+No Tel: 012313132
+Jumlah Peserta: 2
+Tahap: Level 2 – nak semak tarikh & harga</pre>
         </div>
 
         <ul class="bullets">
@@ -141,14 +144,40 @@
           <label for="name">Nama</label>
           <input id="name" name="name" type="text" placeholder="Contoh: Ali" required>
 
-          <label for="location">Lokasi</label>
-          <input id="location" name="location" type="text" placeholder="Contoh: Selangor" required>
-
           <label for="phone">Nombor Telefon</label>
           <input id="phone" name="phone" type="tel" placeholder="Contoh: 0123456789" required>
 
-          <label for="count">Jumlah Peserta</label>
-          <input id="count" name="count" type="number" min="1" value="1" required>
+          <label for="classType">Jenis Kelas</label>
+          <select id="classType" name="classType" required>
+            <option value="">Pilih jenis kelas</option>
+            <option value="Kelas beserta exam">Kelas beserta exam (sijil & kad BLS rasmi)</option>
+            <option value="Kelas & demo">Kelas & demo (sijil penyertaan)</option>
+          </select>
+
+          <label for="locationSelect">Lokasi</label>
+          <select id="locationSelect" name="locationSelect" required>
+            <option value="">Pilih lokasi</option>
+            <option value="Kuala Terengganu">Kuala Terengganu</option>
+            <option value="Seremban">Seremban</option>
+            <option value="Jemput ke lokasi saya">Jemput pasukan ke lokasi saya (min 5 peserta)</option>
+          </select>
+
+          <div id="extraLocation" class="hidden">
+            <label for="customLocation">Nyatakan lokasi jemputan</label>
+            <input id="customLocation" name="customLocation" type="text" placeholder="Contoh: Puncak Alam">
+            <label for="participants">Anggaran jumlah peserta</label>
+            <input id="participants" name="participants" type="number" min="1" value="1">
+          </div>
+
+          <label>Tahap Kesediaan</label>
+          <select id="level" name="level" required>
+            <option value="">Pilih tahap kesediaan</option>
+            <option value="1">Level 1 – Nak tahu harga sahaja</option>
+            <option value="2">Level 2 – Nak tahu harga & semak tarikh</option>
+            <option value="3">Level 3 – Confirm & buat deposit</option>
+          </select>
+
+          <div id="levelMsg" class="level-msg hidden"></div>
 
           <button type="submit" class="btn" id="submitBtn">Hantar ke WhatsApp</button>
 
@@ -169,17 +198,49 @@
       const submitBtn = document.getElementById("submitBtn");
       const fallbackDiv = document.getElementById("fallback");
       const fallbackLink = document.getElementById("fallbackLink");
+      const locationSelect = document.getElementById("locationSelect");
+      const extraLocation = document.getElementById("extraLocation");
+      const levelSelect = document.getElementById("level");
+      const levelMsg = document.getElementById("levelMsg");
 
       function safeTrim(s){return (s||"").toString().trim();}
 
+      // Show/hide extra location fields
+      locationSelect.addEventListener('change', function(){
+        if(locationSelect.value === 'Jemput ke lokasi saya'){
+          extraLocation.classList.remove('hidden');
+        } else {
+          extraLocation.classList.add('hidden');
+        }
+      });
+
+      // Update level message
+      levelSelect.addEventListener('change', function(){
+        levelMsg.classList.remove('hidden');
+        if(levelSelect.value === '1'){
+          levelMsg.textContent = 'Level 1: Anda akan menerima anggaran harga sahaja. Tiada follow-up lanjut.';
+        } else if(levelSelect.value === '2'){
+          levelMsg.textContent = 'Level 2: Kami akan hubungi anda untuk semak tarikh & harga.';
+        } else if(levelSelect.value === '3'){
+          levelMsg.textContent = 'Level 3: Kami akan terus semak slot & hantar quotation untuk deposit.';
+        } else {
+          levelMsg.classList.add('hidden');
+        }
+      });
+
       function buildWhatsAppUrl(data){
-        const text = [
-          `1. Nama: ${data.name}`,
-          `2. Lokasi: ${data.location}`,
-          `3. No Tel: ${data.phone}`,
-          `4. Jumlah Peserta: ${data.count}`
-        ].join('\n');
-        return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
+        let msg = [
+          `Nama: ${data.name}`,
+          `Jenis Kelas: ${data.classType}`,
+          `Lokasi: ${data.location}`,
+          `No Tel: ${data.phone}`,
+          `Tahap: Level ${data.level}`
+        ];
+        if(data.level === '2' || data.level === '3'){
+          msg.push(`Tarikh pilihan: ${data.date || '-'}`);
+          msg.push(`Jumlah peserta: ${data.participants || '1'}`);
+        }
+        return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg.join('\n'))}`;
       }
 
       form.addEventListener('submit', function(ev){
@@ -189,13 +250,16 @@
 
         const payload = {
           name: safeTrim(document.getElementById('name').value),
-          location: safeTrim(document.getElementById('location').value),
           phone: safeTrim(document.getElementById('phone').value),
-          count: safeTrim(document.getElementById('count').value)
+          classType: safeTrim(document.getElementById('classType').value),
+          location: locationSelect.value === 'Jemput ke lokasi saya' ? safeTrim(document.getElementById('customLocation').value) : locationSelect.value,
+          participants: safeTrim(document.getElementById('participants') ? document.getElementById('participants').value : 1),
+          level: safeTrim(levelSelect.value)
         };
 
-        if(!payload.name || !payload.location || !payload.phone || !payload.count){
-          alert('Sila lengkapkan semua maklumat.');
+        // Basic validation
+        if(!payload.name || !payload.phone || !payload.classType || !payload.location || !payload.level){
+          alert('Sila lengkapkan semua maklumat yang wajib.');
           submitBtn.disabled = false;
           submitBtn.textContent = 'Hantar ke WhatsApp';
           return;
