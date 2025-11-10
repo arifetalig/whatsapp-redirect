@@ -71,20 +71,32 @@
       outline: none;
     }
 
+    /* Bahagian jumlah peserta */
     .input-number {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       margin-top: 6px;
+      gap: 8px;
     }
 
     .input-number button {
-      width: 36px;
-      height: 36px;
-      border: none;
-      background: #eee;
-      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid #ccc;
+      background: #f7f7f7;
+      font-size: 22px;
+      font-weight: 600;
       cursor: pointer;
       border-radius: 8px;
+      transition: background 0.2s;
+    }
+
+    .input-number button:hover {
+      background: #e5e5e5;
     }
 
     .input-number input {
@@ -92,9 +104,9 @@
       text-align: center;
       border: 1px solid #ccc;
       border-radius: 8px;
-      margin: 0 8px;
-      padding: 8px;
+      padding: 10px;
       font-size: 1rem;
+      height: 40px;
     }
 
     .hidden {
@@ -150,12 +162,12 @@
     <h1>Pendaftaran Kelas CPR & Heimlich Maneuver</h1>
     <p class="subtitle">
       Isi maklumat ringkas di bawah untuk kami kongsikan harga yuran, tarikh dan slot kosong.
-      Selepas tekan “WhatsApp ke CPR Hero”, WhatsApp anda akan terbuka dengan mesej pra-isian — semak dan hantar untuk lengkapkan pendaftaran.
+      Selepas tekan “WhatsApp ke CPR Hero”, WhatsApp anda akan terbuka dengan mesej pra-isian — semak dan hantar untuk proses seterusnya.
     </p>
 
     <!-- Nama -->
     <label>Nama</label>
-    <input type="text" id="nama" placeholder="Contoh: Ali" />
+    <input type="text" id="nama" placeholder="Contoh: Nur" />
 
     <!-- Jenis Kelas -->
     <label>Jenis kelas</label>
@@ -203,7 +215,7 @@
     <button onclick="hantarWhatsApp()">WhatsApp ke CPR Hero!</button>
   </div>
 
-  <footer class="note">Hosted di GitHub Pages</footer>
+  <footer class="note">CPR Hero</footer>
 
   <script>
     function toggleLokasi() {
@@ -225,9 +237,9 @@
       kelasInfo.classList.remove("hidden");
 
       if (kelasSelect.value === "Kelas Asas") {
-        kelasInfo.textContent = "Teori & demo selama 4 jam – peserta akan menerima sijil penyertaan.";
+        kelasInfo.textContent = "Kelas teori & demo selama 4 jam – peserta akan menerima sijil penyertaan.";
       } else if (kelasSelect.value === "Kelas Lengkap") {
-        kelasInfo.textContent = "Teori, praktikal & ujian selama 6 jam – peserta menerima sijil & kad BLS rasmi.";
+        kelasInfo.textContent = "Kelas teori, praktikal & ujian selama 6 jam – peserta menerima sijil & kad BLS rasmi.";
       } else {
         kelasInfo.classList.add("hidden");
       }
