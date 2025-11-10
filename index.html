@@ -61,7 +61,8 @@
     }
 
     input[type="text"],
-    select {
+    select,
+    input[type="number"] {
       width: 100%;
       padding: 10px;
       margin-top: 6px;
@@ -71,42 +72,13 @@
       outline: none;
     }
 
-    /* Bahagian jumlah peserta */
-    .input-number {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 6px;
-      gap: 8px;
+    input[type="number"] {
+      -moz-appearance: textfield;
     }
-
-    .input-number button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      border: 1px solid #ccc;
-      background: #f7f7f7;
-      font-size: 22px;
-      font-weight: 600;
-      cursor: pointer;
-      border-radius: 8px;
-      transition: background 0.2s;
-    }
-
-    .input-number button:hover {
-      background: #e5e5e5;
-    }
-
-    .input-number input {
-      width: 100%;
-      text-align: center;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 10px;
-      font-size: 1rem;
-      height: 40px;
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: auto;
+      margin: 0;
     }
 
     .hidden {
@@ -162,12 +134,12 @@
     <h1>Pendaftaran Kelas CPR & Heimlich Maneuver</h1>
     <p class="subtitle">
       Isi maklumat ringkas di bawah untuk kami kongsikan harga yuran, tarikh dan slot kosong.
-      Selepas tekan “WhatsApp ke CPR Hero”, WhatsApp anda akan terbuka dengan mesej pra-isian — semak dan hantar untuk proses seterusnya.
+      Selepas tekan “WhatsApp ke CPR Hero”, WhatsApp anda akan terbuka dengan mesej pra-isian — semak dan hantar untuk lengkapkan pendaftaran.
     </p>
 
     <!-- Nama -->
     <label>Nama</label>
-    <input type="text" id="nama" placeholder="Contoh: Nur" />
+    <input type="text" id="nama" placeholder="Contoh: Ali" />
 
     <!-- Jenis Kelas -->
     <label>Jenis kelas</label>
@@ -180,11 +152,7 @@
 
     <!-- Jumlah Peserta -->
     <label>Anggaran jumlah peserta</label>
-    <div class="input-number">
-      <button type="button" onclick="adjustJumlah(-1)">−</button>
-      <input type="number" id="jumlah" value="1" min="1" />
-      <button type="button" onclick="adjustJumlah(1)">+</button>
-    </div>
+    <input type="number" id="jumlah" value="1" min="1" />
 
     <!-- Lokasi -->
     <label>Lokasi</label>
@@ -215,7 +183,7 @@
     <button onclick="hantarWhatsApp()">WhatsApp ke CPR Hero!</button>
   </div>
 
-  <footer class="note">CPR Hero</footer>
+  <footer class="note">Hosted di GitHub Pages</footer>
 
   <script>
     function toggleLokasi() {
@@ -224,22 +192,15 @@
       alamatBox.classList.toggle("hidden", lokasi !== "Jemput CPR Hero ke lokasi saya");
     }
 
-    function adjustJumlah(delta) {
-      const input = document.getElementById("jumlah");
-      let val = parseInt(input.value) || 1;
-      val = Math.max(1, val + delta);
-      input.value = val;
-    }
-
     function updateKelasInfo() {
       const kelasSelect = document.getElementById("kelas");
       const kelasInfo = document.getElementById("kelasInfo");
       kelasInfo.classList.remove("hidden");
 
       if (kelasSelect.value === "Kelas Asas") {
-        kelasInfo.textContent = "Kelas teori & demo selama 4 jam – peserta akan menerima sijil penyertaan.";
+        kelasInfo.textContent = "Teori & demo selama 4 jam – peserta akan menerima sijil penyertaan.";
       } else if (kelasSelect.value === "Kelas Lengkap") {
-        kelasInfo.textContent = "Kelas teori, praktikal & ujian selama 6 jam – peserta menerima sijil & kad BLS rasmi.";
+        kelasInfo.textContent = "Teori, praktikal & ujian selama 6 jam – peserta menerima sijil & kad BLS rasmi.";
       } else {
         kelasInfo.classList.add("hidden");
       }
