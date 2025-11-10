@@ -61,15 +61,20 @@
     }
 
     input[type="text"],
-    select,
-    input[type="number"] {
-      width: 100%;
-      padding: 10px;
-      margin-top: 6px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      outline: none;
+select,
+input[type="number"] {
+  width: 100%;
+  height: 44px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  appearance: none; /* buang gaya default browser (penting untuk select & number) */
+  background-color: #fff;
+  
     }
 
     input[type="number"] {
@@ -183,7 +188,7 @@
     <button onclick="hantarWhatsApp()">WhatsApp ke CPR Hero!</button>
   </div>
 
-  <footer class="note">Hosted di GitHub Pages</footer>
+  <footer class="note">CPR Hero</footer>
 
   <script>
     function toggleLokasi() {
