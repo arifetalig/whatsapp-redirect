@@ -53,22 +53,6 @@
       line-height: 1.5;
     }
 
-    ul.bullets {
-      padding-left: 20px;
-      margin: 14px 0 25px;
-      color: #666;
-    }
-
-    .sample {
-      background: #f7fbff;
-      border: 1px solid #eef6ff;
-      padding: 12px;
-      border-radius: 8px;
-      color: #0b3a66;
-      font-size: 13px;
-      margin-bottom: 18px;
-    }
-
     label {
       display: block;
       margin-top: 20px;
@@ -87,11 +71,37 @@
       outline: none;
     }
 
+    .input-number {
+      display: flex;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .input-number button {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: #eee;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    .input-number input {
+      width: 100%;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin: 0 8px;
+      padding: 8px;
+      font-size: 1rem;
+    }
+
     .hidden {
       display: none;
     }
 
-    .level-msg {
+    .info-box {
       font-size: 13px;
       color: #333;
       margin-top: 8px;
@@ -131,7 +141,7 @@
 </head>
 <body>
 
-  <!-- Bahagian Hero / Sales Page -->
+  <!-- Bahagian Hero -->
   <section class="hero">
     <img src="images/poster.gif" alt="Poster CPR Hero">
   </section>
@@ -143,41 +153,26 @@
       Selepas tekan “WhatsApp ke CPR Hero”, WhatsApp anda akan terbuka dengan mesej pra-isian — semak dan hantar untuk lengkapkan pendaftaran.
     </p>
 
-    <div class="sample">
-      Contoh mesej yang akan dihantar ke WhatsApp:
-      <pre style="white-space:pre-wrap;margin:8px 0 0;font-size:13px">
-Nama: Nur
-Jenis Kelas: Kelas Lengkap (Teori, Praktikal & Ujian)
-Lokasi: Kuala Terengganu
-Jumlah Peserta: 2
-Tahap: Level 2 – nak semak tarikh & harga</pre>
-    </div>
-
-    <ul class="bullets">
-      <li>Latihan praktikal — sijil disediakan</li>
-      <li>Tiada pengalaman perubatan diperlukan</li>
-      <li>Slot terhad setiap kelas — cepat daftar</li>
-    </ul>
-
     <!-- Nama -->
     <label>Nama</label>
     <input type="text" id="nama" placeholder="Contoh: Ali" />
 
     <!-- Jenis Kelas -->
     <label>Jenis kelas</label>
-    <select id="kelas">
+    <select id="kelas" onchange="updateKelasInfo()">
       <option value="" disabled selected>Pilih jenis kelas</option>
-      <option value="Kelas Asas (Teori & Demo | 4 Jam | Sijil penyertaan)">Kelas Asas (Teori & Demo | 4 Jam | Sijil penyertaan)</option>
-      <option value="Kelas Lengkap (Teori, Praktikal & Ujian | 6 Jam | Sijil & Kad BLS)">Kelas Lengkap (Teori, Praktikal & Ujian | 6 Jam | Sijil & Kad BLS)</option>
+      <option value="Kelas Asas">Kelas Asas</option>
+      <option value="Kelas Lengkap">Kelas Lengkap</option>
     </select>
+    <div id="kelasInfo" class="info-box hidden"></div>
 
     <!-- Jumlah Peserta -->
     <label>Anggaran jumlah peserta</label>
-    <select id="jumlah">
-      <option value="" disabled selected>Pilih jumlah</option>
-      <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-      <option>6-10</option><option>>10</option>
-    </select>
+    <div class="input-number">
+      <button type="button" onclick="adjustJumlah(-1)">−</button>
+      <input type="number" id="jumlah" value="1" min="1" />
+      <button type="button" onclick="adjustJumlah(1)">+</button>
+    </div>
 
     <!-- Lokasi -->
     <label>Lokasi</label>
@@ -202,7 +197,7 @@ Tahap: Level 2 – nak semak tarikh & harga</pre>
       <option value="2">Level 2 – Nak tahu harga & semak tarikh</option>
       <option value="3">Level 3 – Confirm & buat deposit</option>
     </select>
-    <div id="levelMsg" class="level-msg hidden"></div>
+    <div id="levelMsg" class="info-box hidden"></div>
 
     <!-- Button -->
     <button onclick="hantarWhatsApp()">WhatsApp ke CPR Hero!</button>
@@ -215,6 +210,27 @@ Tahap: Level 2 – nak semak tarikh & harga</pre>
       const lokasi = document.getElementById("lokasi").value;
       const alamatBox = document.getElementById("alamatBox");
       alamatBox.classList.toggle("hidden", lokasi !== "Jemput CPR Hero ke lokasi saya");
+    }
+
+    function adjustJumlah(delta) {
+      const input = document.getElementById("jumlah");
+      let val = parseInt(input.value) || 1;
+      val = Math.max(1, val + delta);
+      input.value = val;
+    }
+
+    function updateKelasInfo() {
+      const kelasSelect = document.getElementById("kelas");
+      const kelasInfo = document.getElementById("kelasInfo");
+      kelasInfo.classList.remove("hidden");
+
+      if (kelasSelect.value === "Kelas Asas") {
+        kelasInfo.textContent = "Teori & demo selama 4 jam – peserta akan menerima sijil penyertaan.";
+      } else if (kelasSelect.value === "Kelas Lengkap") {
+        kelasInfo.textContent = "Teori, praktikal & ujian selama 6 jam – peserta menerima sijil & kad BLS rasmi.";
+      } else {
+        kelasInfo.classList.add("hidden");
+      }
     }
 
     function updateLevelMsg() {
@@ -254,7 +270,7 @@ Tahap: Level 2 – nak semak tarikh & harga</pre>
       mesej += `Tahap: Level ${level}%0A`;
       mesej += `%0ATerima kasih.`;
 
-      const whatsappURL = `https://wa.me/60123456789?text=${mesej}`;
+      const whatsappURL = `https://wa.me/601114160068?text=${mesej}`;
       window.open(whatsappURL, "_blank");
     }
   </script>
