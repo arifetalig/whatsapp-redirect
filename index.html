@@ -145,12 +145,12 @@ select {
     <h1>Pendaftaran Kelas CPR & Heimlich Maneuver</h1>
     <p class="subtitle">
       Isi maklumat ringkas di bawah untuk kami kongsikan harga yuran, tarikh dan slot kosong.
-      Selepas tekan “WhatsApp ke CPR Hero”, WhatsApp anda akan terbuka dengan mesej pra-isian — semak dan hantar untuk lengkapkan pendaftaran.
+      Selepas tekan “WhatsApp ke CPR Hero”, WhatsApp anda akan terbuka dengan mesej pra-isian — semak dan hantar untuk proses seterusnya.
     </p>
 
     <!-- Nama -->
     <label>Nama</label>
-    <input type="text" id="nama" placeholder="Contoh: Ali" />
+    <input type="text" id="nama" placeholder="Contoh: Nur" />
 
     <!-- Jenis Kelas -->
     <label>Jenis kelas</label>
@@ -166,7 +166,7 @@ select {
     <input type="number" id="jumlah" value="1" min="1" />
 
     <!-- Lokasi -->
-    <label>Lokasi</label>
+    <label>Lokasi Kelas</label>
     <select id="lokasi" onchange="toggleLokasi()">
       <option value="" disabled selected>Pilih lokasi</option>
       <option value="Kuala Terengganu">Kuala Terengganu</option>
@@ -194,7 +194,7 @@ select {
     <button onclick="hantarWhatsApp()">WhatsApp ke CPR Hero!</button>
   </div>
 
-  <footer class="note">CPR Hero</footer>
+  <footer class="note">Form by CPR Hero</footer>
 
   <script>
     function toggleLokasi() {
