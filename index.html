@@ -57,9 +57,8 @@ label {
   font-weight: 600;
   font-size: 0.95rem;
 }
-input[type="text"], select, input[type="number"] {
+input[type="text"], select, input[type="number"], textarea {
   width: 100%;
-  height: 44px;
   box-sizing: border-box;
   padding: 10px 12px;
   margin-top: 6px;
@@ -67,11 +66,19 @@ input[type="text"], select, input[type="number"] {
   border-radius: 8px;
   font-size: 0.95rem;
   outline: none;
-  appearance: none;
   background-color: #fff;
   transition: border-color 0.3s ease;
+  font-family: 'Inter', sans-serif;
 }
-input[type="text"]:focus, select:focus, input[type="number"]:focus {
+input[type="text"], select, input[type="number"] {
+  height: 44px;
+  appearance: none;
+}
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+input[type="text"]:focus, select:focus, input[type="number"]:focus, textarea:focus {
   border-color: #25d366;
 }
 .field-error {
@@ -101,15 +108,18 @@ select {
   border-radius: 6px;
   transition: 0.3s ease;
 }
-.level1 { background: #ffe5e5; border-left: 4px solid #ff3b3b; }
-.level2 { background: #fff3e0; border-left: 4px solid #ff9800; }
-.level3 { background: #eaffe5; border-left: 4px solid #0a7d00; }
-.level4 { background: #e7f1ff; border-left: 4px solid #1a73e8; }
+.action1 { background: #ffe5e5; border-left: 4px solid #ff3b3b; }
+.action2 { background: #fff3e0; border-left: 4px solid #ff9800; }
+.action3 { background: #eaffe5; border-left: 4px solid #0a7d00; }
+
+.glow-red { animation: glowRed 1.5s infinite alternate; }
+@keyframes glowRed { 0% { box-shadow: 0 0 0px rgba(255, 59, 59, 0.4); } 100% { box-shadow: 0 0 12px rgba(255, 59, 59, 0.7); } }
+
+.glow-yellow { animation: glowYellow 1.5s infinite alternate; }
+@keyframes glowYellow { 0% { box-shadow: 0 0 0px rgba(255, 152, 0, 0.4); } 100% { box-shadow: 0 0 12px rgba(255, 152, 0, 0.7); } }
 
 .glow-green { animation: glowGreen 1.5s infinite alternate; }
 @keyframes glowGreen { 0% { box-shadow: 0 0 0px rgba(0, 255, 102, 0.4); } 100% { box-shadow: 0 0 12px rgba(0, 255, 102, 0.7); } }
-.glow-blue { animation: glowBlue 1.5s infinite alternate; }
-@keyframes glowBlue { 0% { box-shadow: 0 0 0px rgba(30, 136, 229, 0.4); } 100% { box-shadow: 0 0 12px rgba(30, 136, 229, 0.7); } }
 
 #estimateTitle {
   text-align: center;
@@ -199,7 +209,7 @@ footer.note {
     padding: 16px;
     font-size: 1.05rem;
   }
-  input[type="text"], select, input[type="number"] {
+  input[type="text"], select, input[type="number"], textarea {
     font-size: 16px; /* Prevent zoom on iOS */
   }
 }
@@ -272,16 +282,21 @@ footer.note {
   <span id="estimateNote" class="estimate-note" style="display:none;">(Sila lengkapkan pilihan untuk lihat anggaran)</span>
 </div>
 
-<!-- LEVEL -->
-<label for="level">Tahap kesediaan</label>
-<select id="level" aria-label="Pilih tahap kesediaan" aria-required="true" onchange="highlightLevel()">
-  <option value="" disabled selected>Pilih tahap kesediaan</option>
-  <option value="1">Level 1 – Nak tahu harga sahaja</option>
-  <option value="2">Level 2 – Nak tahu harga & semak tarikh</option>
-  <option value="3">Level 3 – Confirm & buat deposit (paling popular)</option>
-  <option value="4">Level 4 – Bayar penuh & booking terus</option>
+<!-- PILIH TINDAKAN SETERUSNYA -->
+<label for="action">Pilih tindakan seterusnya</label>
+<select id="action" aria-label="Pilih tindakan seterusnya" aria-required="true" onchange="highlightAction()">
+  <option value="" disabled selected>Pilih tindakan</option>
+  <option value="1">🔴 Saya nak tanya detail sebelum confirm deposit</option>
+  <option value="2">🟡 Saya nak semak slot & buat deposit</option>
+  <option value="3">🟢 Saya nak booking & bayar penuh sekarang</option>
 </select>
-<div id="levelMsg" class="info-box hidden"></div>
+<div id="actionMsg" class="info-box hidden"></div>
+
+<!-- SOALAN (CONDITIONAL) -->
+<div id="soalanContainer" class="hidden">
+  <label for="soalan">Soalan anda (pilihan)</label>
+  <textarea id="soalan" placeholder="Contoh: Ada Special Price tak kalau ramai? Ada Referral Reward: Yuran percuma untuk introducer tak?"></textarea>
+</div>
 
 <button id="submitBtn" onclick="hantarWhatsApp()">WhatsApp ke CPR Hero!</button>
 </div>
@@ -343,27 +358,34 @@ function updateLokasiInfo() {
   }
 }
 
-// =================== LEVEL ===================
-function highlightLevel() {
-  const level = document.getElementById("level").value;
-  const msg = document.getElementById("levelMsg");
+// =================== ACTION ===================
+function highlightAction() {
+  const action = document.getElementById("action").value;
+  const msg = document.getElementById("actionMsg");
+  const soalanContainer = document.getElementById("soalanContainer");
 
   msg.className = "info-box";
   msg.classList.remove("hidden");
-  msg.classList.remove("level1","level2","level3","level4","glow-green","glow-blue");
+  msg.classList.remove("action1","action2","action3","glow-red","glow-yellow","glow-green");
 
-  if (level === "1") msg.classList.add("level1");
-  if (level === "2") msg.classList.add("level2");
-  if (level === "3") msg.classList.add("level3","glow-green");
-  if (level === "4") msg.classList.add("level4","glow-blue");
+  // Show/hide soalan field based on selection
+  if (action === "1") {
+    soalanContainer.classList.remove("hidden");
+    msg.classList.add("action1","glow-red");
+  } else {
+    soalanContainer.classList.add("hidden");
+    document.getElementById("soalan").value = ""; // Clear soalan if hidden
+  }
+
+  if (action === "2") msg.classList.add("action2","glow-yellow");
+  if (action === "3") msg.classList.add("action3","glow-green");
 
   const teks = {
-    1:"Level 1: Anda akan menerima anggaran harga sahaja. Tiada follow-up lanjut.",
-    2:"Level 2: Kami akan hubungi anda untuk semak tarikh dan harga.",
-    3:"Level 3: Kami akan terus semak slot dan hantar quotation untuk deposit.",
-    4:"Level 4: Fast lane! Booking terus dan bayar penuh."
+    1:"Hantar mesej auto dengan nama, kelas, tarikh cadangan & soalan anda.",
+    2:"Kami akan hubungi anda untuk confirm slot dan hantar link deposit.",
+    3:"Secure tempat anda terus tanpa tunggu."
   };
-  msg.textContent = teks[level];
+  msg.textContent = teks[action];
 }
 
 // =================== PRICE LOGIC ===================
@@ -633,7 +655,7 @@ function hantarWhatsApp() {
     const jumlah = document.getElementById("jumlah").value;
     const bulan = document.getElementById("bulan").value;
     const tahun = document.getElementById("tahun").value;
-    const level = document.getElementById("level").value;
+    const action = document.getElementById("action").value;
 
     // Visual validation
     let allValid = true;
@@ -643,9 +665,9 @@ function hantarWhatsApp() {
     allValid = validateField("jumlah") && allValid;
     allValid = validateField("bulan") && allValid;
     allValid = validateField("tahun") && allValid;
-    allValid = validateField("level") && allValid;
+    allValid = validateField("action") && allValid;
 
-    if (!allValid || !nama || !kelas || !lokasi || !jumlah || !bulan || !tahun || !level) {
+    if (!allValid || !nama || !kelas || !lokasi || !jumlah || !bulan || !tahun || !action) {
       alert("Sila isi semua maklumat dengan lengkap.");
       return;
     }
@@ -655,11 +677,10 @@ function hantarWhatsApp() {
     btn.disabled = true;
     btn.textContent = "Menghantar...";
 
-    const teksLevel = {
-      1:"Level 1: Anda akan menerima anggaran harga sahaja. Tiada follow-up lanjut.",
-      2:"Level 2: Kami akan hubungi anda untuk semak tarikh dan harga.",
-      3:"Level 3: Kami akan terus semak slot dan hantar quotation untuk deposit.",
-      4:"Level 4: Fast lane! Booking terus dan bayar penuh."
+    const actionText = {
+      1:"🔴 Saya nak tanya detail sebelum confirm deposit",
+      2:"🟡 Saya nak semak slot & buat deposit",
+      3:"🟢 Saya nak booking & bayar penuh sekarang"
     };
 
     let mesej =
@@ -669,11 +690,17 @@ Jenis Kelas: ${kelas}
 Lokasi: ${lokasi}
 Anggaran Peserta: ${jumlah}
 Cadangan Tarikh: ${bulan} ${tahun}
-Tahap Kesediaan: Level ${level}
+Tindakan Seterusnya: ${actionText[action]}`;
 
-${teksLevel[level]}
+    // Add soalan if action is 1
+    if (action === "1") {
+      const soalan = sanitizeInput(document.getElementById("soalan").value);
+      if (soalan) {
+        mesej += `\n\nSoalan saya: ${soalan}`;
+      }
+    }
 
-Terima kasih.`;
+    mesej += "\n\nTerima kasih.";
 
     const url = "https://wa.me/601114160068?text=" + encodeURIComponent(mesej);
     
